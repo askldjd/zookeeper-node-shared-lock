@@ -4,7 +4,10 @@
   "description": "",
   "main": "client.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec --recursive ./test",
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- -R spec --recursive ./test",
+    "lint": "eslint ./lib",
+    "pre-commit": "npm run coverage && npm run lint"
   },
   "author": "",
   "license": "ISC",
@@ -12,5 +15,10 @@
     "async": "^2.0.0-rc.3",
     "debug": "^2.2.0",
     "node-zookeeper-client": "^0.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^2.9.0",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.4.5"
   }
 }
