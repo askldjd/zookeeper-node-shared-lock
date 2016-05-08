@@ -36,44 +36,53 @@ describe('', function() {
     });
   });
 
-  describe('Two-lock Test', function() {
+  function makeTwoLockTest(opt) {
+    return function() {
+      let lockService;
+      let acquiredResource;
+      it('create lock service', function(done) {
+        let opt = {};
+        lockService = createLockService(opt);
 
-    let lockService;
-    let acquiredResource;
-    it('create lock service', function(done) {
-      let opt = {};
-      lockService = createLockService(opt);
-
-      lockService.events.on('ready', () => {
-        done();
-      });
-    });
-
-    it('lock a resource', function(done) {
-      lockService.lock(PATH, 0, (err, resource) => {
-        acquiredResource = resource;
-        done();
-      });
-    });
-
-    it('lock contention, need to wait 2 sec before acquiring', function(done) {
-      this.timeout(4000);
-      lockService.lock(PATH, 0, (err, resource) => {
-        acquiredResource = resource;
-        done();
-      });
-
-      setTimeout(() => {
-        lockService.unlock(acquiredResource, (err) => {
-
+        lockService.events.on('ready', () => {
+          done();
         });
-      }, 2000)
-    });
-
-    it('unlock the resource', function(done) {
-      lockService.unlock(acquiredResource, (err) => {
-        done();
       });
-    });
-  });
+
+      it('lock a resource', function(done) {
+        lockService.lock(PATH, opt.ttl, (err, resource) => {
+          acquiredResource = resource;
+          done();
+        });
+      });
+
+      it('lock contention, need to wait 2 sec before acquiring', function(done) {
+        this.timeout(4000);
+        lockService.lock(PATH, opt.ttl, (err, resource) => {
+          acquiredResource = resource;
+          done();
+        });
+
+        setTimeout(() => {
+          lockService.unlock(acquiredResource, (err) => {
+
+          });
+        }, 2000)
+      });
+
+      it('unlock the resource', function(done) {
+        lockService.unlock(acquiredResource, (err) => {
+          done();
+        });
+      });
+    }
+  }
+
+  describe('Two-lock Test with infinite wait', makeTwoLockTest({
+    ttl: 0
+  }));
+
+  describe('Two-lock Test with TTL', makeTwoLockTest({
+    ttl: 500
+  }));
 });
