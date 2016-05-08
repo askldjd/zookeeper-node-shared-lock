@@ -1,11 +1,8 @@
 'use strict';
 
-const async = require('async');
-var zookeeper = require('node-zookeeper-client');
-var zkClient = zookeeper.createClient('localhost:2181');
-
 const createLockService = require('../lib/lock-service');
-const PATH = '/__lock-node__/myresource';
+const RESOURCE_ID = 'myresource';
+const expect = require('expect');
 
 describe('', function() {
 
@@ -23,7 +20,8 @@ describe('', function() {
     });
 
     it('lock a resource', function(done) {
-      lockService.lock(PATH, 0, (err, resource) => {
+      lockService.lock(RESOURCE_ID, 0, (err, resource) => {
+        expect(err).toBeFalsy();
         acquiredResource = resource;
         done();
       });
@@ -31,6 +29,7 @@ describe('', function() {
 
     it('unlock a resource', function(done) {
       lockService.unlock(acquiredResource, (err) => {
+        expect(err).toBeFalsy();
         done();
       });
     });
@@ -50,7 +49,7 @@ describe('', function() {
       });
 
       it('lock a resource', function(done) {
-        lockService.lock(PATH, opt.ttl, (err, resource) => {
+        lockService.lock(RESOURCE_ID, opt.ttl, (err, resource) => {
           acquiredResource = resource;
           done();
         });
@@ -58,24 +57,25 @@ describe('', function() {
 
       it('lock contention, need to wait 2 sec before acquiring', function(done) {
         this.timeout(4000);
-        lockService.lock(PATH, opt.ttl, (err, resource) => {
+        lockService.lock(RESOURCE_ID, opt.ttl, (err, resource) => {
           acquiredResource = resource;
           done();
         });
 
         setTimeout(() => {
           lockService.unlock(acquiredResource, (err) => {
-
+            expect(err).toBeFalsy();
           });
-        }, 2000)
+        }, 2000);
       });
 
       it('unlock the resource', function(done) {
         lockService.unlock(acquiredResource, (err) => {
+          expect(err).toBeFalsy();
           done();
         });
       });
-    }
+    };
   }
 
   describe('Two-lock Test with infinite wait', makeTwoLockTest({
@@ -83,6 +83,41 @@ describe('', function() {
   }));
 
   describe('Two-lock Test with TTL', makeTwoLockTest({
-    ttl: 500
+    ttl: 5000
   }));
+
+  describe('Two-lock Test with TTL failure', function() {
+    let lockService;
+    let acquiredResource;
+    it('create lock service', function(done) {
+      let opt = {};
+      lockService = createLockService(opt);
+
+      lockService.events.on('ready', () => {
+        done();
+      });
+    });
+
+    it('lock a resource', function(done) {
+      lockService.lock(RESOURCE_ID, 500, (err, resource) => {
+        acquiredResource = resource;
+        done();
+      });
+    });
+
+    it('lock contention, need to wait 2 sec before acquiring', function(done) {
+      this.timeout(4000);
+      lockService.lock(RESOURCE_ID, 500, (err) => {
+        expect(err).toBeTruthy();
+        done();
+      });
+
+      setTimeout(() => {
+        lockService.unlock(acquiredResource, (err) => {
+          expect(err).toBeFalsy();
+        });
+      }, 2000);
+    });
+  });
+
 });
