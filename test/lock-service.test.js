@@ -9,28 +9,71 @@ const PATH = '/__lock-node__/myresource';
 
 describe('', function() {
 
-  let lockService;
-  let acquiredResource;
-  it('create lock service', function(done) {
-    let opt = {};
-    lockService = createLockService(opt);
+  describe('Simple Lock Unlock Test', function() {
 
-    lockService.events.on('ready', () => {
-      done();
+    let lockService;
+    let acquiredResource;
+    it('create lock service', function(done) {
+      let opt = {};
+      lockService = createLockService(opt);
+
+      lockService.events.on('ready', () => {
+        done();
+      });
+    });
+
+    it('lock a resource', function(done) {
+      lockService.lock(PATH, 0, (err, resource) => {
+        acquiredResource = resource;
+        done();
+      });
+    });
+
+    it('unlock a resource', function(done) {
+      lockService.unlock(acquiredResource, (err) => {
+        done();
+      });
     });
   });
 
-  it('lock a resource', function(done) {
-    lockService.lock(PATH, 0, (err, resource) => {
-      acquiredResource = resource;
-      done();
-    });
-  });
+  describe('Two-lock Test', function() {
 
-  it('unlock a resource', function(done) {
-    console.log('acquired resource is', acquiredResource);
-    lockService.unlock(acquiredResource, (err) => {
-      done();
+    let lockService;
+    let acquiredResource;
+    it('create lock service', function(done) {
+      let opt = {};
+      lockService = createLockService(opt);
+
+      lockService.events.on('ready', () => {
+        done();
+      });
+    });
+
+    it('lock a resource', function(done) {
+      lockService.lock(PATH, 0, (err, resource) => {
+        acquiredResource = resource;
+        done();
+      });
+    });
+
+    it('lock contention, need to wait 2 sec before acquiring', function(done) {
+      this.timeout(4000);
+      lockService.lock(PATH, 0, (err, resource) => {
+        acquiredResource = resource;
+        done();
+      });
+
+      setTimeout(() => {
+        lockService.unlock(acquiredResource, (err) => {
+
+        });
+      }, 2000)
+    });
+
+    it('unlock the resource', function(done) {
+      lockService.unlock(acquiredResource, (err) => {
+        done();
+      });
     });
   });
 });

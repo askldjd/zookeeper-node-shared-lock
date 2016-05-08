@@ -1,3 +1,9 @@
+# zk-global-lock
+
+This library implements a distributed global lock in Node.js using Zookeeper. The lock protocol follows the [Zookeeper recipe](https://zookeeper.apache.org/doc/r3.3.5/recipes.html#sc_recipes_Locks).
+
+## Lock Protocol
+
 Clients wishing to obtain a lock do the following:
 
 1. Call `create()` with a pathname of "_locknode_/guid-lock-" and the sequence and ephemeral flags set. The guid is needed in case the `create()` result is missed.
