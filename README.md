@@ -1,13 +1,13 @@
-# zk-global-lock
+# zookeeper-node-shared-lock
 
-This library implements a distributed global lock in Node.js using Zookeeper. The lock protocol follows the [Zookeeper recipe](https://zookeeper.apache.org/doc/r3.3.5/recipes.html#sc_recipes_Locks).
+This library implements a distributed global lock in Node.js using Zookeeper. The lock protocol is a variant of the [Zookeeper recipe](https://zookeeper.apache.org/doc/r3.3.5/recipes.html#sc_recipes_Locks).
 
 The library is only suitable for educational references, and should not be used directly in production.
 
 ## API
 
 ## Creation
-`zk-global-lock` returns a factory function that creates a lock service. The
+`zookeeper-node-shared-lock` returns a factory function that creates a lock service. The
 function expects a set of configuration options. Once the service is created, you may subscribe to the `ready` event. Once the `ready` event is fired, you may begin locking/unlocking resources.
 
 #### Parameters
@@ -19,7 +19,7 @@ The configuration parameters includes the following:
 #### Sample
 
 ```js
-const lockService = require('zk-global-lock')({
+const lockService = require('zookeeper-node-shared-lock')({
   resourceName: 'my_global_resource', // the name of the resource
   host: 'localhost', // default: localhost
   port: 2181 // default: 2181
@@ -37,7 +37,21 @@ lockService.events.on('ready', () => {
 });
 ```
 
-## Lock Protocol
+## lock(resourceId, ttl, [cb])
+
+`lock` acquires a resource asynchronously. The `resourceId` is the shared resource to lock. If the shared resource is acquired, or failed to be acquired, the `cb(err, acquiredResource)` will be invoked.
+
+The return `acquiredResource` argument is used to `unlock` the acquired resource.
+
+If `ttl` (in milliseconds) is provided, the lock service will retry up to TTL before giving up. The retry algorithm is [binary exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff).
+
+If `ttl` is 0 (default), lock service will wait indefinitely until the resource is acquired. There is no retry invoked since a permanent watch is used to monitor the resource.
+
+## unlock(acquiredResource, [cb])
+
+`unlock` releases a resource asynchronously. The `acquiredResource` is the acquired resource returned from `lock`.
+
+## ZooKeeper Lock Recipe
 
 Clients wishing to obtain a lock do the following:
 

@@ -1,5 +1,5 @@
 {
-  "name": "zk-global-lock",
+  "name": "zookeeper-node-shared-lock",
   "version": "1.0.0",
   "description": "A Node.js implementation of distributed lock using Zookeeper.",
   "main": "client.js",
@@ -19,12 +19,12 @@
 
   "license": "ISC",
   "dependencies": {
-    "async": "^2.0.0-rc.3",
     "debug": "^2.2.0",
     "eslint": "^2.9.0",
     "node-zookeeper-client": "^0.2.2"
   },
   "devDependencies": {
+    "async": "^2.0.0-rc.3",
     "eslint": "^2.9.0",
     "expect": "^1.20.1",
     "istanbul": "^0.4.3",
