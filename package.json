@@ -1,7 +1,7 @@
 {
   "name": "zk-global-lock",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Node.js implementation of distributed lock using Zookeeper.",
   "main": "client.js",
   "scripts": {
     "test": "mocha -R spec --recursive ./test",
@@ -9,7 +9,14 @@
     "lint": "eslint ./lib",
     "pre-commit": "npm run coverage && npm run lint"
   },
-  "author": "",
+  "author": {
+    "email": "askldjd@gmail.com",
+    "name": "Alan Ning"
+  },
+  "bugs": {
+    "url": "https://github.com/askldjd/zookeeper-distributed-lock"
+  },
+
   "license": "ISC",
   "dependencies": {
     "async": "^2.0.0-rc.3",
