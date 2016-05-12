@@ -1,6 +1,6 @@
 {
   "name": "zookeeper-node-shared-lock",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Node.js implementation of distributed lock using Zookeeper.",
   "main": "client.js",
   "scripts": {
@@ -16,7 +16,6 @@
   "bugs": {
     "url": "https://github.com/askldjd/zookeeper-distributed-lock"
   },
-
   "license": "ISC",
   "dependencies": {
     "debug": "^2.2.0",
