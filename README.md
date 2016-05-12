@@ -58,6 +58,7 @@ If `ttl` is 0 (default), the acquired lock resource will be held indefinitely.
 
 - `ready` - fired when Lock Service is ready.
 - `ttlExpired` - fired with `function (resourceId)` if a resource is being forcefully released.
+- `disconnected` - fired when we lost connection to Zookeeper
 
 ## ZooKeeper Lock Recipe
 
