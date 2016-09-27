@@ -51,7 +51,7 @@ If `ttl` is 0 (default), the acquired lock resource will be held indefinitely.
 
 ### unlock(acquiredResource, [cb])
 
-`unlock` releases a resource asynchronously. The `acquiredResource` is the acquired resource returned from `lock`.
+`unlock` releases the acquired resource asynchronously. The `acquiredResource` is the acquired resource returned from `lock`.
 
 
 ## Events
